@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CareVoice AI</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 680px; margin: 32px auto; padding: 0 16px; }
+    button { font-size: 1rem; padding: 10px 18px; border: 0; border-radius: 8px;
+             background: #1f6feb; color: white; cursor: pointer; }
+    button:disabled { opacity: 0.5; cursor: wait; }
+    button.recording { background: #c62828; }
+    button.secondary { background: #e3e7ec; color: #1c2430; }
+    #conversation { border: 1px solid #dde2e8; border-radius: 10px; padding: 12px;
+                    min-height: 240px; max-height: 60vh; overflow-y: auto; }
+    .message { margin: 8px 0; padding: 10px 14px; border-radius: 10px; max-width: 85%;
+               white-space: pre-wrap; }
+    .user { background: #1f6feb; color: white; margin-left: auto; }
+    .assistant { background: #f0f2f5; }
+    .label { font-size: 0.75rem; opacity: 0.8; display: block; margin-bottom: 2px; }
+    .sources { font-size: 0.8rem; color: #555; display: block; margin-top: 6px; }
+    #message-form { display: flex; gap: 8px; margin-top: 12px; }
+    #message-input { flex: 1; font-size: 1rem; padding: 10px; border: 1px solid #c9d1d9; border-radius: 8px; }
+    .controls { display: flex; gap: 8px; margin-top: 8px; }
+    .muted { color: #666; }
+    .error { color: #c62828; }
+  </style>
+</head>
+<body>
+  <h1>CareVoice AI</h1>
+  <p class="muted">Brightwater Community Hospital assistant. Fictional hospital, not medical advice.</p>
+
+  <div id="conversation"></div>
+
+  <form id="message-form">
+    <input id="message-input" placeholder="Type a message..." autocomplete="off">
+    <button type="submit" id="send-button">Send</button>
+  </form>
+
+  <div class="controls">
+    <button id="record-button">Start recording</button>
+    <button id="new-conversation-button" class="secondary">New conversation</button>
+  </div>
+  <p id="status" class="muted">Type a message, or press "Start recording" and speak.</p>
+
+  <script>
+    const conversationBox = document.getElementById("conversation");
+    const messageForm = document.getElementById("message-form");
+    const messageInput = document.getElementById("message-input");
+    const sendButton = document.getElementById("send-button");
+    const recordButton = document.getElementById("record-button");
+    const newConversationButton = document.getElementById("new-conversation-button");
+    const statusText = document.getElementById("status");
+
+    let conversationId = null;   // given to us by the server after the first message
+    let recorder = null;         // the MediaRecorder while recording, otherwise null
+    let chunks = [];             // pieces of audio collected while recording
+
+    // ---------- Chat ----------
+
+    messageForm.addEventListener("submit", (event) => {
+      event.preventDefault();    // stop the browser from reloading the page
+      const text = messageInput.value.trim();
+      if (text) {
+        messageInput.value = "";
+        sendMessage(text);
+      }
+    });
+
+    async function sendMessage(text) {
+      addMessage("user", text);
+      setBusy(true);
+      setStatus("CareVoice is thinking...");
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text, conversation_id: conversationId }),
+        });
+        const result = await response.json();
+        if (!response.ok) {
+          showError(readableError(result));
+          return;
+        }
+        conversationId = result.conversation_id;   // remember it for the next message
+        addMessage("assistant", result.reply, result.sources);
+        setStatus(`Answered in ${result.seconds} s · ${result.model} · prompt ${result.prompt_version}`);
+      } catch (error) {
+        showError("Could not reach the server: " + error.message);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function addMessage(role, text, sources = []) {
+      const bubble = document.createElement("div");
+      bubble.className = `message ${role}`;
+      const label = document.createElement("span");
+      label.className = "label";
+      label.textContent = role === "user" ? "You" : "CareVoice";
+      bubble.append(label, text);    // text is added as plain text, never as HTML
+
+      if (sources.length > 0) {
+        const sourceList = document.createElement("span");
+        sourceList.className = "sources";
+        sourceList.textContent = "Sources: " + sources.map((s) => `${s.title} → ${s.section}`).join(" · ");
+        bubble.append(sourceList);
+      }
+      conversationBox.append(bubble);
+      conversationBox.scrollTop = conversationBox.scrollHeight;   // scroll to the newest message
+    }
+
+    newConversationButton.addEventListener("click", () => {
+      conversationId = null;
+      conversationBox.replaceChildren();
+      setStatus("New conversation started.");
+    });
+
+    // ---------- Voice ----------
+
+    recordButton.addEventListener("click", async () => {
+      if (recorder) {
+        recorder.stop();   // second click: stop (this triggers recorder.onstop below)
+        return;
+      }
+
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (error) {
+        showError("Microphone not available: " + error.message);
+        return;
+      }
+
+      recorder = new MediaRecorder(stream);
+      chunks = [];
+      recorder.ondataavailable = (event) => chunks.push(event.data);
+      recorder.onstop = () => {
+        stream.getTracks().forEach((track) => track.stop());   // turn the microphone off
+        const audio = new Blob(chunks, { type: recorder.mimeType });
+        recorder = null;
+        recordButton.textContent = "Start recording";
+        recordButton.classList.remove("recording");
+        sendVoiceMessage(audio);
+      };
+
+      recorder.start();
+      recordButton.textContent = "Stop recording";
+      recordButton.classList.add("recording");
+      setStatus("Recording... press the button again to stop.");
+    });
+
+    async function sendVoiceMessage(audio) {
+      setBusy(true);
+      setStatus("Listening and thinking...");
+
+      // One request: the server transcribes the audio AND asks the model.
+      const form = new FormData();
+      form.append("file", audio, "recording.webm");   // "file" must match the endpoint's parameter name
+      if (conversationId) {
+        form.append("conversation_id", conversationId);
+      }
+
+      try {
+        const response = await fetch("/voice-chat", { method: "POST", body: form });
+        const result = await response.json();
+        if (!response.ok) {
+          showError(readableError(result));
+          return;
+        }
+        conversationId = result.conversation_id;   // remember it for the next message
+        addMessage("user", result.transcript);     // what the server heard
+        addMessage("assistant", result.reply, result.sources);
+        setStatus(
+          `Speech ${result.transcribe_seconds} s + answer ${result.llm_seconds} s = ` +
+          `${result.total_seconds} s · ${result.model} · prompt ${result.prompt_version}`
+        );
+      } catch (error) {
+        showError("Could not reach the server: " + error.message);
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    // ---------- Helpers ----------
+
+    function setBusy(busy) {
+      sendButton.disabled = busy;
+      recordButton.disabled = busy;
+    }
+
+    function setStatus(message) {
+      statusText.className = "muted";
+      statusText.textContent = message;
+    }
+
+    function showError(message) {
+      statusText.className = "error";
+      statusText.textContent = message;
+    }
+
+    function readableError(result) {
+      // Our own errors have a text "detail"; FastAPI's validation errors have a list.
+      return typeof result.detail === "string" ? result.detail : "Please check your message and try again.";
+    }
+  </script>
+</body>
+</html>

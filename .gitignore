@@ -1,0 +1,7 @@
+# Python's caches and the virtual environment
+__pycache__/
+.pytest_cache/
+.venv/
+
+# The knowledge base database. It's rebuilt from data/documents/ by running ingest.py.
+data/chroma/

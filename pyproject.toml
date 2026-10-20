@@ -1,0 +1,35 @@
+[project]
+name = "carevoice-ai"
+version = "0.1.0"
+description = "A local healthcare voice assistant (learning project)"
+requires-python = ">=3.12"
+dependencies = [
+    "faster-whisper>=1.2",
+    # faster-whisper uses the "av" library to read audio files.
+    # av version 19 changed something that faster-whisper 1.2 relies on, so we stay below 19.
+    "av<19",
+    "fastapi[standard]>=0.156.0",
+    "httpx>=0.28.1",
+    "pyyaml>=6.0.3",
+    "chromadb>=1.5.9",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+]
+
+[tool.pytest.ini_options]
+# Let tests import our code with "from app.main import app".
+pythonpath = ["."]
+
+[tool.pylint.main]
+# "av" is compiled C code; let Pylint load it so it can see names like FFmpegError.
+extension-pkg-allow-list = ["av"]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint."messages control"]
+# Our function names (e.g. test_chat_rejects_an_empty_message) already say what they do.
+disable = ["missing-function-docstring"]

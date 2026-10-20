@@ -1,0 +1,226 @@
+{
+  "_notice": "FICTIONAL DATA. These patients do not exist. Phone numbers use the reserved 555-01xx range and emails use the reserved example.com domain.",
+  "reference_date": "2026-10-20",
+  "patients": [
+    {
+      "patient_id": "P-1001",
+      "first_name": "Daniel",
+      "last_name": "Okonkwo",
+      "date_of_birth": "1968-04-11",
+      "phone": "(503) 555-0140",
+      "email": "daniel.okonkwo@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Medicare", "member_id": "MCR-7731-0042" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1002",
+      "first_name": "Lucía",
+      "last_name": "Fernández",
+      "date_of_birth": "1990-09-23",
+      "phone": "(503) 555-0141",
+      "email": "lucia.fernandez@example.com",
+      "preferred_language": "Spanish",
+      "insurance": { "plan": "Evergreen Health Plan", "member_id": "EVG-482913" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1003",
+      "first_name": "Wei",
+      "last_name": "Zhang",
+      "date_of_birth": "1975-12-02",
+      "phone": "(503) 555-0142",
+      "email": "wei.zhang@example.com",
+      "preferred_language": "Mandarin",
+      "insurance": { "plan": "Cascade Mutual PPO", "member_id": "CMP-100583" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1004",
+      "first_name": "Maya",
+      "last_name": "Haddad",
+      "date_of_birth": "2019-03-14",
+      "phone": "(503) 555-0143",
+      "email": "nadia.haddad@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Medicaid", "member_id": "MCD-559102" },
+      "guardian_patient_id": "P-1005"
+    },
+    {
+      "patient_id": "P-1005",
+      "first_name": "Nadia",
+      "last_name": "Haddad",
+      "date_of_birth": "1987-07-30",
+      "phone": "(503) 555-0143",
+      "email": "nadia.haddad@example.com",
+      "preferred_language": "Arabic",
+      "insurance": { "plan": "Medicaid", "member_id": "MCD-559101" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1006",
+      "first_name": "Robert",
+      "last_name": "Kowalski",
+      "date_of_birth": "1959-02-17",
+      "phone": "(503) 555-0144",
+      "email": "robert.kowalski@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Summit Care HMO", "member_id": "SCH-330917" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1007",
+      "first_name": "Priya",
+      "last_name": "Raman",
+      "date_of_birth": "1995-05-08",
+      "phone": "(503) 555-0145",
+      "email": "priya.raman@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Cascade Mutual PPO", "member_id": "CMP-204471" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1008",
+      "first_name": "George",
+      "last_name": "Albright",
+      "date_of_birth": "1952-11-29",
+      "phone": "(503) 555-0146",
+      "email": "george.albright@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Medicare", "member_id": "MCR-1189-7710" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1009",
+      "first_name": "An",
+      "last_name": "Tran",
+      "date_of_birth": "2022-06-02",
+      "phone": "(971) 555-0150",
+      "email": "linh.tran@example.com",
+      "preferred_language": "Vietnamese",
+      "insurance": { "plan": "Evergreen Health Plan", "member_id": "EVG-610284" },
+      "guardian_patient_id": "P-1012"
+    },
+    {
+      "patient_id": "P-1010",
+      "first_name": "Sofia",
+      "last_name": "Marchetti",
+      "date_of_birth": "1983-08-19",
+      "phone": "(503) 555-0147",
+      "email": "sofia.marchetti@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Evergreen Health Plan", "member_id": "EVG-775320" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1011",
+      "first_name": "Tyler",
+      "last_name": "Brennan",
+      "date_of_birth": "2001-01-05",
+      "phone": "(503) 555-0148",
+      "email": "tyler.brennan@example.com",
+      "preferred_language": "English",
+      "insurance": null,
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1012",
+      "first_name": "Linh",
+      "last_name": "Tran",
+      "date_of_birth": "1991-10-14",
+      "phone": "(971) 555-0150",
+      "email": "linh.tran@example.com",
+      "preferred_language": "Vietnamese",
+      "insurance": { "plan": "Evergreen Health Plan", "member_id": "EVG-610283" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1013",
+      "first_name": "Jordan",
+      "last_name": "Ellis",
+      "date_of_birth": "2009-01-25",
+      "phone": "(503) 555-0149",
+      "email": "karen.ellis@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Cascade Mutual PPO", "member_id": "CMP-918822" },
+      "guardian_patient_id": "P-1014"
+    },
+    {
+      "patient_id": "P-1014",
+      "first_name": "Karen",
+      "last_name": "Ellis",
+      "date_of_birth": "1978-03-03",
+      "phone": "(503) 555-0149",
+      "email": "karen.ellis@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Cascade Mutual PPO", "member_id": "CMP-918821" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1015",
+      "first_name": "Ahmed",
+      "last_name": "Siddiqui",
+      "date_of_birth": "1988-06-21",
+      "phone": "(971) 555-0151",
+      "email": "ahmed.siddiqui@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Summit Care HMO", "member_id": "SCH-447105" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1016",
+      "first_name": "Emily",
+      "last_name": "Novak",
+      "date_of_birth": "1999-04-27",
+      "phone": "(971) 555-0152",
+      "email": "emily.novak@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Northstar Indemnity", "member_id": "NSI-002931" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1017",
+      "first_name": "Michael",
+      "last_name": "Johnson",
+      "date_of_birth": "1970-09-09",
+      "phone": "(971) 555-0153",
+      "email": "michael.johnson@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Cascade Mutual PPO", "member_id": "CMP-551009" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1018",
+      "first_name": "Michael",
+      "last_name": "Johnston",
+      "date_of_birth": "1984-02-14",
+      "phone": "(971) 555-0154",
+      "email": "michael.johnston@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Evergreen Health Plan", "member_id": "EVG-118840" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1019",
+      "first_name": "Sarah",
+      "last_name": "Kim",
+      "date_of_birth": "1985-07-04",
+      "phone": "(971) 555-0155",
+      "email": "sarah.kim85@example.com",
+      "preferred_language": "English",
+      "insurance": { "plan": "Medicaid", "member_id": "MCD-772210" },
+      "guardian_patient_id": null
+    },
+    {
+      "patient_id": "P-1020",
+      "first_name": "Sarah",
+      "last_name": "Kim",
+      "date_of_birth": "1992-11-18",
+      "phone": "(971) 555-0156",
+      "email": "sarah.kim92@example.com",
+      "preferred_language": "Korean",
+      "insurance": { "plan": "Summit Care HMO", "member_id": "SCH-901337" },
+      "guardian_patient_id": null
+    }
+  ]
+}

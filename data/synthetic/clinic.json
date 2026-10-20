@@ -1,0 +1,356 @@
+{
+  "_notice": "FICTIONAL DATA. Brightwater Community Hospital, its staff, and its policies do not exist. For software development only.",
+  "facts_version": "1.0",
+  "effective_date": "2026-07-01",
+
+  "hospital": {
+    "name": "Brightwater Community Hospital",
+    "address": "1200 Lantern Way, Fernhaven, OR 97999",
+    "main_phone": "(503) 555-0100",
+    "appointments_phone": "(503) 555-0110",
+    "billing_phone": "(503) 555-0120",
+    "email": "info@brightwater-hospital.example",
+    "time_zone": "America/Los_Angeles",
+    "outpatient_hours": {
+      "monday_to_friday": "08:00-18:00",
+      "saturday": "09:00-13:00",
+      "sunday": "closed"
+    },
+    "emergency_department": "Open 24 hours, 7 days a week. For emergencies, call 911."
+  },
+
+  "policies": {
+    "cancellation_notice_hours": 24,
+    "late_cancellation_fee_usd": 25,
+    "no_show_fee_usd": 50,
+    "late_reschedule_counts_as_late_cancellation": true,
+    "fee_waiver_reasons": [
+      "medical emergency",
+      "hospital admission",
+      "hospital closure due to severe weather"
+    ],
+    "late_arrival_grace_minutes": 15,
+    "new_patient_arrive_early_minutes": 20,
+    "max_appointments_booked_per_patient": 3,
+    "booking_window_days": 90,
+    "same_day_appointments_departments": ["family-medicine", "pediatrics"],
+    "booking_channels": [
+      "Appointments line (503) 555-0110",
+      "Department phone lines",
+      "CareVoice, the hospital's virtual assistant"
+    ],
+    "booking_requires": ["patient ID", "date of birth"],
+    "visiting_hours": {
+      "general_wards": "09:00-20:00",
+      "pediatrics_ward": "Parents and guardians at any time; other visitors 10:00-19:00",
+      "max_visitors_per_patient": 2
+    },
+    "accepted_insurance": [
+      "Evergreen Health Plan",
+      "Cascade Mutual PPO",
+      "Summit Care HMO",
+      "Medicare",
+      "Medicaid"
+    ],
+    "self_pay_discount_percent": 20
+  },
+
+  "billing": {
+    "copay_collected_at": "check-in",
+    "payment_methods": ["credit or debit card", "cash", "monthly payment plan"],
+    "payment_plan_minimum_balance_usd": 200,
+    "financial_assistance": "Available for eligible patients. Apply through the billing office.",
+    "prior_authorization": "For CT and MRI scans, the ordering doctor's office requests prior authorization from your insurance plan.",
+    "hmo_referral_note": "Summit Care HMO members need a referral from their primary care doctor before any specialist visit.",
+    "itemized_bill": "Available on request from the billing office."
+  },
+
+  "visit_preparation": {
+    "bring": [
+      "photo ID",
+      "insurance card",
+      "list of current medications",
+      "referral letter, if your department requires one"
+    ],
+    "telehealth": {
+      "how_it_works": "A video link is sent by email 1 hour before the appointment.",
+      "test_connection_minutes_before": 10,
+      "not_suitable_for": "first visits that need a physical examination"
+    },
+    "interpreter_services": "Free medical interpreters are available. Ask for one when booking.",
+    "accessibility": "All buildings have step-free access. Wheelchairs are available at every main entrance."
+  },
+
+  "laboratory": {
+    "location": "Building A, Floor 1",
+    "walk_in_hours": {
+      "monday_to_friday": "07:00-17:00",
+      "saturday": "08:00-12:00"
+    },
+    "requires": "a lab order from a doctor",
+    "fasting": {
+      "tests_that_usually_require_fasting": ["fasting glucose", "lipid panel (cholesterol)"],
+      "fasting_hours": "8 to 12",
+      "allowed_while_fasting": "water"
+    },
+    "results": "Results are usually available within 2 business days. Your doctor's office will contact you."
+  },
+
+  "imaging_preparation": {
+    "general": "Your ordering doctor's instructions take priority over this general guidance.",
+    "x_ray": "No special preparation. Remove jewelry and metal items from the area being imaged.",
+    "ultrasound": {
+      "abdominal": "Do not eat or drink for 6 hours before the scan.",
+      "pelvic": "Drink 1 liter of water 1 hour before the scan and do not empty your bladder."
+    },
+    "ct_scan": "If your scan uses contrast dye, do not eat for 4 hours before. Tell staff about any allergies or kidney problems.",
+    "mri": "Remove all metal. Tell staff before the scan if you have a pacemaker, metal implants, or might be pregnant. The scan takes about 45 minutes."
+  },
+
+  "facilities": {
+    "parking": "Visitor garage on Lantern Way. First 30 minutes free, then $2 per hour, maximum $12 per day.",
+    "cafeteria": "Building A, Floor 1. Open daily 07:00-19:00.",
+    "wifi": "Free guest Wi-Fi network: Brightwater-Guest",
+    "lost_and_found": "Main reception, Building A",
+    "main_reception": "Building A, Floor 1"
+  },
+
+  "virtual_assistant": {
+    "name": "CareVoice",
+    "can_help_with": [
+      "finding departments and doctors",
+      "checking availability",
+      "booking and cancelling appointments",
+      "answering questions about hospital policies"
+    ],
+    "cannot": [
+      "give medical advice",
+      "diagnose conditions",
+      "recommend treatments",
+      "handle emergencies (call 911)"
+    ]
+  },
+
+  "departments": [
+    {
+      "id": "family-medicine",
+      "name": "Family Medicine",
+      "location": "Building A, Floor 1",
+      "phone": "(503) 555-0131",
+      "description": "Routine checkups, preventive care, vaccinations, and referrals to specialists.",
+      "telehealth_available": true,
+      "appointment_types": [
+        { "type": "new_patient", "duration_minutes": 40 },
+        { "type": "follow_up", "duration_minutes": 20 },
+        { "type": "annual_physical", "duration_minutes": 40 }
+      ]
+    },
+    {
+      "id": "cardiology",
+      "name": "Cardiology",
+      "location": "Building B, Floor 2",
+      "phone": "(503) 555-0132",
+      "description": "Heart and blood vessel care. A referral from a primary care doctor is required for new patients.",
+      "telehealth_available": true,
+      "referral_required": true,
+      "appointment_types": [
+        { "type": "new_patient", "duration_minutes": 60 },
+        { "type": "follow_up", "duration_minutes": 30 }
+      ]
+    },
+    {
+      "id": "dermatology",
+      "name": "Dermatology",
+      "location": "Building A, Floor 3",
+      "phone": "(503) 555-0133",
+      "description": "Skin, hair, and nail conditions.",
+      "telehealth_available": false,
+      "appointment_types": [
+        { "type": "new_patient", "duration_minutes": 30 },
+        { "type": "follow_up", "duration_minutes": 15 }
+      ]
+    },
+    {
+      "id": "orthopedics",
+      "name": "Orthopedics",
+      "location": "Building C, Floor 1",
+      "phone": "(503) 555-0134",
+      "description": "Bones, joints, and sports injuries.",
+      "telehealth_available": false,
+      "appointment_types": [
+        { "type": "new_patient", "duration_minutes": 45 },
+        { "type": "follow_up", "duration_minutes": 20 }
+      ]
+    },
+    {
+      "id": "pediatrics",
+      "name": "Pediatrics",
+      "location": "Building A, Floor 2",
+      "phone": "(503) 555-0135",
+      "description": "Care for children from birth to age 17. A parent or guardian must attend with patients under 18.",
+      "telehealth_available": true,
+      "appointment_types": [
+        { "type": "new_patient", "duration_minutes": 40 },
+        { "type": "follow_up", "duration_minutes": 20 },
+        { "type": "well_child_visit", "duration_minutes": 30 }
+      ]
+    },
+    {
+      "id": "radiology",
+      "name": "Radiology",
+      "location": "Building B, Floor 1",
+      "phone": "(503) 555-0136",
+      "description": "X-ray, ultrasound, CT, and MRI imaging. All imaging requires an order from a doctor.",
+      "telehealth_available": false,
+      "referral_required": true,
+      "appointment_types": [
+        { "type": "x_ray", "duration_minutes": 15 },
+        { "type": "ultrasound", "duration_minutes": 30 },
+        { "type": "ct_scan", "duration_minutes": 30 },
+        { "type": "mri", "duration_minutes": 60 }
+      ]
+    }
+  ],
+
+  "doctors": [
+    {
+      "id": "dr-maya-chen",
+      "name": "Dr. Maya Chen",
+      "department_id": "family-medicine",
+      "languages": ["English", "Mandarin"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "monday", "start": "08:00", "end": "16:00" },
+        { "day": "wednesday", "start": "08:00", "end": "16:00" },
+        { "day": "friday", "start": "08:00", "end": "12:00" }
+      ]
+    },
+    {
+      "id": "dr-samuel-brooks",
+      "name": "Dr. Samuel Brooks",
+      "department_id": "family-medicine",
+      "languages": ["English"],
+      "accepting_new_patients": false,
+      "weekly_schedule": [
+        { "day": "tuesday", "start": "09:00", "end": "17:00" },
+        { "day": "thursday", "start": "09:00", "end": "17:00" },
+        { "day": "saturday", "start": "09:00", "end": "13:00" }
+      ]
+    },
+    {
+      "id": "dr-elena-rivera",
+      "name": "Dr. Elena Rivera",
+      "department_id": "cardiology",
+      "languages": ["English", "Spanish"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "monday", "start": "09:00", "end": "17:00" },
+        { "day": "thursday", "start": "09:00", "end": "17:00" }
+      ]
+    },
+    {
+      "id": "dr-james-whitaker",
+      "name": "Dr. James Whitaker",
+      "department_id": "cardiology",
+      "languages": ["English"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "tuesday", "start": "08:00", "end": "14:00" },
+        { "day": "friday", "start": "08:00", "end": "14:00" }
+      ]
+    },
+    {
+      "id": "dr-chidi-okafor",
+      "name": "Dr. Chidi Okafor",
+      "department_id": "dermatology",
+      "languages": ["English", "Igbo"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "tuesday", "start": "10:00", "end": "18:00" },
+        { "day": "wednesday", "start": "10:00", "end": "18:00" }
+      ]
+    },
+    {
+      "id": "dr-hannah-lindqvist",
+      "name": "Dr. Hannah Lindqvist",
+      "department_id": "dermatology",
+      "languages": ["English", "Swedish"],
+      "accepting_new_patients": false,
+      "weekly_schedule": [
+        { "day": "monday", "start": "08:00", "end": "12:00" },
+        { "day": "thursday", "start": "13:00", "end": "18:00" }
+      ]
+    },
+    {
+      "id": "dr-raj-patel",
+      "name": "Dr. Raj Patel",
+      "department_id": "orthopedics",
+      "languages": ["English", "Hindi", "Gujarati"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "monday", "start": "08:00", "end": "15:00" },
+        { "day": "wednesday", "start": "08:00", "end": "15:00" },
+        { "day": "friday", "start": "08:00", "end": "15:00" }
+      ]
+    },
+    {
+      "id": "dr-grace-morales",
+      "name": "Dr. Grace Morales",
+      "department_id": "orthopedics",
+      "languages": ["English", "Spanish"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "tuesday", "start": "12:00", "end": "18:00" },
+        { "day": "thursday", "start": "12:00", "end": "18:00" }
+      ]
+    },
+    {
+      "id": "dr-aisha-rahman",
+      "name": "Dr. Aisha Rahman",
+      "department_id": "pediatrics",
+      "languages": ["English", "Arabic", "Bengali"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "monday", "start": "08:00", "end": "16:00" },
+        { "day": "tuesday", "start": "08:00", "end": "16:00" },
+        { "day": "thursday", "start": "08:00", "end": "16:00" }
+      ]
+    },
+    {
+      "id": "dr-thomas-nguyen",
+      "name": "Dr. Thomas Nguyen",
+      "department_id": "pediatrics",
+      "languages": ["English", "Vietnamese"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "wednesday", "start": "09:00", "end": "17:00" },
+        { "day": "friday", "start": "09:00", "end": "17:00" },
+        { "day": "saturday", "start": "09:00", "end": "13:00" }
+      ]
+    },
+    {
+      "id": "dr-olivia-hart",
+      "name": "Dr. Olivia Hart",
+      "department_id": "radiology",
+      "languages": ["English"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "monday", "start": "08:00", "end": "18:00" },
+        { "day": "wednesday", "start": "08:00", "end": "18:00" },
+        { "day": "friday", "start": "08:00", "end": "18:00" }
+      ]
+    },
+    {
+      "id": "dr-marcus-bell",
+      "name": "Dr. Marcus Bell",
+      "department_id": "radiology",
+      "languages": ["English", "French"],
+      "accepting_new_patients": true,
+      "weekly_schedule": [
+        { "day": "tuesday", "start": "08:00", "end": "18:00" },
+        { "day": "thursday", "start": "08:00", "end": "18:00" },
+        { "day": "saturday", "start": "09:00", "end": "13:00" }
+      ]
+    }
+  ]
+}
