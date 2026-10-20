@@ -1,7 +1,7 @@
-"""Tests for /chat and /voice-chat, using a FAKE language model.
+"""Tests for /chat and /voice-chat, using a FAKE language model and a fake search (see conftest.py).
 
 The real model is slow, needs Ollama running, and words its answers differently every time.
-These tests check OUR code (memory, the pipeline, error handling), not the quality of the
+These tests check OUR code (memory, the pipeline, lookups, error handling), not the quality of the
 model's answers, so a fake model that replies instantly and predictably is all we need.
 
 Run:
@@ -16,61 +16,23 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app import conversations, llm, main
+from app.departments import look_up_departments
+from app.doctors import look_up_doctors
+from app.knowledge import KnowledgeError, SearchResult
 from app.llm import LLMError, add_documents_to_question
+
+# Every test in this file uses the fake search, so no test here needs Ollama or the knowledge base.
+pytestmark = pytest.mark.usefixtures("no_documents")
 
 client = TestClient(main.app)
 
-FAKE_REPLY = "This is a fake reply."
-
-
-# ---------- Fixtures: setup that tests can ask for by name ----------
-
-@pytest.fixture(autouse=True)
-def empty_memory(monkeypatch):
-    """Give every test an empty conversation memory, so tests can't affect each other."""
-    monkeypatch.setattr(conversations, "_conversations", {})
-
-
-@pytest.fixture(autouse=True)
-def no_documents(monkeypatch):
-    """Replace the real knowledge base search (which needs Ollama) with one that finds nothing."""
-    monkeypatch.setattr(main, "search", lambda question: [])
-
 
 def as_sent(text):
-    """How the current message looks when sent to the model: with its (empty) documents block attached."""
-    return {"role": "user", "content": add_documents_to_question(text, [])}
-
-
-@pytest.fixture
-def fake_llm(monkeypatch):
-    """Replace the real model with a fake one. Returns the list of conversations it was sent."""
-    received = []
-
-    def fake_chat(messages):
-        received.append(messages)
-        return {
-            "reply": FAKE_REPLY,
-            "model": "fake-model",
-            "prompt_version": "test",
-            "input_tokens": 0,
-            "output_tokens": 0,
-            "seconds": 0.0,
-        }
-
-    # Replace "chat" inside app.main, because that's where the endpoints look it up.
-    monkeypatch.setattr(main, "chat", fake_chat)
-    return received
-
-
-@pytest.fixture
-def fake_speech(monkeypatch):
-    """Replace Whisper with a fake that always 'hears' the same sentence."""
-
-    def fake_transcribe(audio):
-        return {"text": "What are the visiting hours?", "audio_seconds": 2.0, "processing_seconds": 0.1}
-
-    monkeypatch.setattr(main, "transcribe", fake_transcribe)
+    """How the current message looks when sent to the model: with its documents block and lookups attached."""
+    return {
+        "role": "user",
+        "content": add_documents_to_question(text, [], look_up_doctors(text), look_up_departments(text)),
+    }
 
 
 def upload_recording(conversation_id=None):
@@ -90,7 +52,7 @@ def test_chat_returns_the_reply_and_a_new_conversation_id(fake_llm):
 
     assert response.status_code == 200
     result = response.json()
-    assert result["reply"] == FAKE_REPLY
+    assert result["reply"] == fake_llm.reply
     assert len(result["conversation_id"]) == 32
 
 
@@ -100,9 +62,9 @@ def test_chat_sends_earlier_messages_to_the_model(fake_llm):
 
     # The second time, the model must receive the whole conversation, in order.
     # Earlier messages are stored plain; only the current one has documents attached.
-    assert fake_llm[1] == [
+    assert fake_llm.received[1] == [
         {"role": "user", "content": "My name is Darshil"},
-        {"role": "assistant", "content": FAKE_REPLY},
+        {"role": "assistant", "content": fake_llm.reply},
         as_sent("What is my name?"),
     ]
 
@@ -111,14 +73,14 @@ def test_separate_conversations_do_not_share_memory(fake_llm):
     client.post("/chat", json={"message": "My name is Darshil"})
     client.post("/chat", json={"message": "What is my name?"})  # no ID: a new conversation
 
-    assert fake_llm[1] == [as_sent("What is my name?")]
+    assert fake_llm.received[1] == [as_sent("What is my name?")]
 
 
 def test_chat_rejects_an_empty_message(fake_llm):
     response = client.post("/chat", json={"message": ""})
 
     assert response.status_code == 422
-    assert fake_llm == []  # the model was never called
+    assert fake_llm.received == []  # the model was never called
 
 
 def test_chat_returns_503_and_remembers_nothing_when_the_model_is_down(monkeypatch):
@@ -133,6 +95,39 @@ def test_chat_returns_503_and_remembers_nothing_when_the_model_is_down(monkeypat
     assert conversations.get_history("abc") == []  # the failed turn was not saved
 
 
+def test_chat_returns_503_when_the_knowledge_base_cannot_be_searched(monkeypatch, fake_llm):
+    def broken_search(question):
+        raise KnowledgeError("The knowledge base could not be searched.")
+
+    monkeypatch.setattr(main, "search", broken_search)
+    response = client.post("/chat", json={"message": "What are the visiting hours?"})
+
+    assert response.status_code == 503
+    assert fake_llm.received == []
+
+
+def test_chat_attaches_doctor_and_department_lookups(fake_llm):
+    client.post("/chat", json={"message": "Is Dr. Kim in the heart department?"})
+
+    sent = fake_llm.received[0][-1]["content"]
+    assert "<doctor_lookup>" in sent and "there is no doctor with this name" in sent
+    assert "<department_lookup>" in sent and "Cardiology" in sent
+
+
+def test_chat_returns_retrieval_diagnostics(monkeypatch, fake_llm):
+    found = SearchResult("cancellation-policy#4", "cancellation-policy", "Cancellation Policy", "Fees", "text", 0.31)
+    monkeypatch.setattr(main, "search", lambda question: [found])
+
+    result = client.post("/chat", json={"message": "What is the late cancellation fee?"}).json()
+
+    assert result["retrieval"] == [
+        {"chunk_id": "cancellation-policy#4", "doc_id": "cancellation-policy", "distance": 0.31},
+    ]
+    assert result["sources"] == [{"title": "Cancellation Policy", "section": "Fees"}]
+    assert set(result["timings"]) == {"search_seconds", "lookup_seconds", "llm_seconds", "total_seconds"}
+    assert result["lookups"] == {"doctors": 0, "departments": 0}
+
+
 # ---------- /voice-chat ----------
 
 def test_voice_chat_transcribes_and_answers_in_one_request(fake_speech, fake_llm):
@@ -141,16 +136,17 @@ def test_voice_chat_transcribes_and_answers_in_one_request(fake_speech, fake_llm
     assert response.status_code == 200
     result = response.json()
     assert result["transcript"] == "What are the visiting hours?"
-    assert result["reply"] == FAKE_REPLY
+    assert result["reply"] == fake_llm.reply
+    assert "retrieval" in result
     # The model was given exactly what Whisper heard.
-    assert fake_llm[0] == [as_sent("What are the visiting hours?")]
+    assert fake_llm.received[0] == [as_sent("What are the visiting hours?")]
 
 
 def test_voice_chat_continues_an_existing_conversation(fake_speech, fake_llm):
     first = client.post("/chat", json={"message": "My name is Darshil"}).json()
     upload_recording(conversation_id=first["conversation_id"])
 
-    assert len(fake_llm[1]) == 3  # typed message + its reply + the spoken message
+    assert len(fake_llm.received[1]) == 3  # typed message + its reply + the spoken message
 
 
 def test_voice_chat_does_not_call_the_model_when_nothing_was_heard(monkeypatch, fake_llm):
@@ -159,14 +155,14 @@ def test_voice_chat_does_not_call_the_model_when_nothing_was_heard(monkeypatch, 
 
     assert response.status_code == 422
     assert "No speech" in response.json()["detail"]
-    assert fake_llm == []
+    assert fake_llm.received == []
 
 
 def test_voice_chat_rejects_a_file_that_is_not_audio(fake_llm):
     response = client.post("/voice-chat", files={"file": ("notes.txt", b"hello", "text/plain")})
 
     assert response.status_code == 415
-    assert fake_llm == []
+    assert fake_llm.received == []
 
 
 # ---------- app/llm.py, without Ollama ----------
@@ -195,6 +191,22 @@ def test_llm_reports_a_clear_error_when_ollama_is_not_running(monkeypatch):
 
     with pytest.raises(LLMError, match="Ollama is not running"):
         llm.chat([{"role": "user", "content": "Hello"}])
+
+
+def test_prompt_separates_personal_advice_from_provider_questions():
+    # The safety refactor: provider/service questions must be answered, not refused as medical advice.
+    assert "are NOT medical advice" in llm.SYSTEM_PROMPT
+    assert "MOST IMPORTANT RULE" in llm.SYSTEM_PROMPT and "911" in llm.SYSTEM_PROMPT
+    # The old closed-world department list (which made the model deny a pharmacy exists) is gone.
+    assert "COMPLETE list of departments" not in llm.SYSTEM_PROMPT
+
+
+def test_lookup_blocks_are_only_added_when_there_is_something_to_say():
+    plain = add_documents_to_question("Hello", [])
+    assert "<doctor_lookup>" not in plain and "<department_lookup>" not in plain
+
+    full = add_documents_to_question("Hi", [], ["doctor fact"], ["department fact"])
+    assert full.index("<doctor_lookup>") < full.index("<department_lookup>") < full.index("Question: Hi")
 
 
 # ---------- app/conversations.py ----------

@@ -4,6 +4,8 @@ Run:
     uv run fastapi dev app/main.py --port 8010
 """
 
+import json
+import logging
 import time
 from pathlib import Path
 
@@ -12,10 +14,16 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from app.conversations import get_history, new_conversation_id, save_turn
+from app.departments import look_up_departments
 from app.doctors import look_up_doctors
 from app.knowledge import KnowledgeError, search
 from app.llm import LLMError, add_documents_to_question, chat
 from app.speech import AudioError, transcribe
+
+# Show our diagnostic log lines (e.g. "carevoice.retrieval") in the server's terminal.
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
+logging.getLogger("httpx").setLevel(logging.WARNING)  # hide httpx's line for every request it sends
+logger = logging.getLogger("carevoice.answer")
 
 # The web page lives in the "frontend" folder next to the "app" folder.
 FRONTEND_PAGE = Path(__file__).parent.parent / "frontend" / "index.html"
@@ -51,19 +59,32 @@ def transcribe_upload(file: UploadFile) -> dict:
 UNAVAILABLE_MESSAGE = "The assistant is unavailable right now. Please try again in a moment."
 
 
+def seconds_since(start: float) -> float:
+    return round(time.perf_counter() - start, 3)
+
+
 def answer(conversation_id: str, text: str) -> dict:
-    """Answer the user's message from the hospital documents, and remember the turn."""
+    """Answer the user's message from the hospital documents and lookups, and remember the turn."""
+    start = time.perf_counter()
+
     # 1. Find the document excerpts relevant to this message.
     try:
         sources = search(text)
     except KnowledgeError as error:
         raise HTTPException(status_code=503, detail=UNAVAILABLE_MESSAGE) from error
+    search_seconds = seconds_since(start)
 
-    # 2. Check any doctor names against the complete list of doctors.
+    # 2. Check doctor and department names against the hospital's complete lists (exact, deterministic).
+    lookup_start = time.perf_counter()
     doctor_facts = look_up_doctors(text)
+    department_facts = look_up_departments(text)
+    lookup_seconds = seconds_since(lookup_start)
 
-    # 3. Send the conversation so far, plus this message with its excerpts attached, to the model.
-    question_with_documents = {"role": "user", "content": add_documents_to_question(text, sources, doctor_facts)}
+    # 3. Send the conversation so far, plus this message with its excerpts and lookups attached, to the model.
+    question_with_documents = {
+        "role": "user",
+        "content": add_documents_to_question(text, sources, doctor_facts, department_facts),
+    }
     try:
         result = chat(get_history(conversation_id) + [question_with_documents])
     except LLMError as error:
@@ -77,6 +98,28 @@ def answer(conversation_id: str, text: str) -> dict:
     )
 
     result["sources"] = [{"title": source.title, "section": source.section} for source in sources]
+    # Diagnostics: exactly which evidence the answer was based on, and where the time went.
+    result["retrieval"] = [
+        {"chunk_id": source.chunk_id, "doc_id": source.doc_id, "distance": source.distance} for source in sources
+    ]
+    result["lookups"] = {"doctors": len(doctor_facts), "departments": len(department_facts)}
+    result["timings"] = {
+        "search_seconds": search_seconds,
+        "lookup_seconds": lookup_seconds,
+        "llm_seconds": result["seconds"],
+        "total_seconds": seconds_since(start),
+    }
+    logger.info(json.dumps({
+        "event": "answer",
+        "conversation_id": conversation_id,
+        "model": result["model"],
+        "prompt_version": result["prompt_version"],
+        "chunk_ids": [source.chunk_id for source in sources],
+        "lookups": result["lookups"],
+        "input_tokens": result["input_tokens"],
+        "output_tokens": result["output_tokens"],
+        **result["timings"],
+    }))
     return result
 
 
@@ -132,6 +175,8 @@ def voice_chat(file: UploadFile, conversation_id: str | None = Form(default=None
         "transcript": speech["text"],
         "reply": result["reply"],
         "sources": result["sources"],
+        "retrieval": result["retrieval"],
+        "lookups": result["lookups"],
         "conversation_id": conversation_id,
         "model": result["model"],
         "prompt_version": result["prompt_version"],

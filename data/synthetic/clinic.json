@@ -135,6 +135,7 @@
     {
       "id": "family-medicine",
       "name": "Family Medicine",
+      "aliases": ["family doctor", "family physician", "primary care", "general practice", "general practitioner", "gp", "checkup", "check-up", "annual physical", "vaccination", "vaccinations", "vaccine", "flu shot", "immunization"],
       "location": "Building A, Floor 1",
       "phone": "(503) 555-0131",
       "description": "Routine checkups, preventive care, vaccinations, and referrals to specialists.",
@@ -148,6 +149,7 @@
     {
       "id": "cardiology",
       "name": "Cardiology",
+      "aliases": ["cardiologist", "cardiac", "cardio", "heart", "heart doctor"],
       "location": "Building B, Floor 2",
       "phone": "(503) 555-0132",
       "description": "Heart and blood vessel care. A referral from a primary care doctor is required for new patients.",
@@ -161,6 +163,7 @@
     {
       "id": "dermatology",
       "name": "Dermatology",
+      "aliases": ["dermatologist", "derm", "skin", "skin doctor", "acne", "rash", "mole", "eczema"],
       "location": "Building A, Floor 3",
       "phone": "(503) 555-0133",
       "description": "Skin, hair, and nail conditions.",
@@ -173,6 +176,7 @@
     {
       "id": "orthopedics",
       "name": "Orthopedics",
+      "aliases": ["orthopaedics", "orthopedic", "orthopaedic", "orthopedist", "bone", "bones", "bone doctor", "joint", "joints", "sports injury", "sports injuries", "fracture"],
       "location": "Building C, Floor 1",
       "phone": "(503) 555-0134",
       "description": "Bones, joints, and sports injuries.",
@@ -185,6 +189,7 @@
     {
       "id": "pediatrics",
       "name": "Pediatrics",
+      "aliases": ["paediatrics", "pediatric", "paediatric", "pediatrician", "paediatrician", "children", "children's", "child", "kids", "kid", "baby", "infant"],
       "location": "Building A, Floor 2",
       "phone": "(503) 555-0135",
       "description": "Care for children from birth to age 17. A parent or guardian must attend with patients under 18.",
@@ -198,6 +203,7 @@
     {
       "id": "radiology",
       "name": "Radiology",
+      "aliases": ["radiologist", "imaging", "x-ray", "xray", "x ray", "scan", "mri", "ct", "ct scan", "ultrasound"],
       "location": "Building B, Floor 1",
       "phone": "(503) 555-0136",
       "description": "X-ray, ultrasound, CT, and MRI imaging. All imaging requires an order from a doctor.",

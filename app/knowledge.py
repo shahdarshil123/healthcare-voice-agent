@@ -1,12 +1,18 @@
 """The knowledge base: hospital document chunks stored in ChromaDB, searchable by meaning."""
 
+import json
+import logging
+import time
 from dataclasses import dataclass
 from pathlib import Path
 
 import chromadb
 import httpx
+from chromadb.errors import ChromaError
 
 from app.documents import Chunk
+
+logger = logging.getLogger("carevoice.retrieval")
 
 OLLAMA_EMBED_URL = "http://127.0.0.1:11434/api/embed"
 EMBEDDING_MODEL = "all-minilm"
@@ -110,17 +116,21 @@ def search(question: str, top_k: int = TOP_K) -> list[SearchResult]:
 
     Returns an empty list when nothing in the documents is close enough to the question.
     """
+    start_time = time.perf_counter()
     try:
         question_vector = embed(question)
     except httpx.HTTPError as error:
         raise KnowledgeError("The embedding model could not be reached.") from error
 
-    results = get_collection().query(
-        query_embeddings=[question_vector],
-        n_results=top_k,
-        where={"status": "current"},  # never use outdated (superseded) documents
-        include=["documents", "metadatas", "distances"],
-    )
+    try:
+        results = get_collection().query(
+            query_embeddings=[question_vector],
+            n_results=top_k,
+            where={"status": "current"},  # never use outdated (superseded) documents
+            include=["documents", "metadatas", "distances"],
+        )
+    except ChromaError as error:
+        raise KnowledgeError("The knowledge base could not be searched.") from error
     documents, metadatas, distances = results["documents"], results["metadatas"], results["distances"]
     # ChromaDB's types allow these to be missing (when not requested). We requested them, so they're here.
     assert documents is not None and metadatas is not None and distances is not None
@@ -137,4 +147,15 @@ def search(question: str, top_k: int = TOP_K) -> list[SearchResult]:
                 text=text,
                 distance=round(distance, 3),
             ))
+
+    # Diagnostics: every candidate, including the ones the threshold dropped. The question itself is
+    # not logged, because in a real deployment it could contain personal health information.
+    logger.info(json.dumps({
+        "event": "retrieval",
+        "candidates": [{"chunk_id": chunk_id, "distance": round(distance, 3), "kept": distance <= MAX_DISTANCE}
+                       for chunk_id, distance in zip(results["ids"][0], distances[0])],
+        "kept": len(found),
+        "max_distance": MAX_DISTANCE,
+        "seconds": round(time.perf_counter() - start_time, 3),
+    }))
     return found

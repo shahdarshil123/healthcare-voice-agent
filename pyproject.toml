@@ -22,6 +22,11 @@ dev = [
 [tool.pytest.ini_options]
 # Let tests import our code with "from app.main import app".
 pythonpath = ["."]
+markers = [
+    "model: uses the real AI models through Ollama (slow, needs Ollama running). Run with: uv run pytest -m model",
+]
+# By default, skip the slow real-model tests. "-m model" on the command line overrides this.
+addopts = "--strict-markers -m 'not model'"
 
 [tool.pylint.main]
 # "av" is compiled C code; let Pylint load it so it can see names like FFmpegError.
@@ -32,4 +37,5 @@ max-line-length = 120
 
 [tool.pylint."messages control"]
 # Our function names (e.g. test_chat_rejects_an_empty_message) already say what they do.
-disable = ["missing-function-docstring"]
+# In tests, "assert x == []" is clearer than "assert not x": pytest then shows what x actually was.
+disable = ["missing-function-docstring", "use-implicit-booleaness-not-comparison"]
