@@ -41,6 +41,20 @@ def test_whole_words_only():
     assert resolve_departments("Er, can I book something") == []
 
 
+def test_er_in_capitals_is_the_emergency_room():
+    assert resolved_ids("Where is the ER?") == ["emergency"]
+
+
+def test_heart_idiom_is_not_cardiology():
+    assert resolve_departments("My heart is set on a Friday appointment") == []
+    assert resolved_ids("Where is the heart department?") == ["cardiology"]
+
+
+def test_misspellings_never_create_a_denial():
+    # Typo-matching specialties we don't have turned "cancel" into "cancer" (no Oncology department).
+    assert resolve_departments("I want to cancel my appointment") == []
+
+
 # ---------- Misspellings ----------
 
 def test_misspellings_are_probable_matches():

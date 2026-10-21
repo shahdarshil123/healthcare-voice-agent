@@ -1,0 +1,182 @@
+{
+  "created_at": "2026-10-20T22:28:47.411773+00:00",
+  "cases": 110,
+  "cases_fully_correct": 108,
+  "doctors": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "true_positives": 50,
+    "false_positives": 0,
+    "false_negatives": 0
+  },
+  "departments": {
+    "precision": 0.963,
+    "recall": 0.981,
+    "f1": 0.972,
+    "true_positives": 52,
+    "false_positives": 2,
+    "false_negatives": 1
+  },
+  "wrong_denials": [
+    "neg-021: ('not_offered', ('Oncology',))"
+  ],
+  "by_tag": {
+    "abbreviation": {
+      "correct": 2,
+      "cases": 2
+    },
+    "alias": {
+      "correct": 11,
+      "cases": 11
+    },
+    "bare_name": {
+      "correct": 5,
+      "cases": 5
+    },
+    "british_spelling": {
+      "correct": 2,
+      "cases": 2
+    },
+    "common_surname": {
+      "correct": 6,
+      "cases": 6
+    },
+    "department": {
+      "correct": 49,
+      "cases": 50
+    },
+    "doctor": {
+      "correct": 47,
+      "cases": 47
+    },
+    "everyday_word": {
+      "correct": 3,
+      "cases": 3
+    },
+    "facility": {
+      "correct": 2,
+      "cases": 2
+    },
+    "filler": {
+      "correct": 1,
+      "cases": 1
+    },
+    "first_name": {
+      "correct": 3,
+      "cases": 3
+    },
+    "formatting": {
+      "correct": 2,
+      "cases": 2
+    },
+    "full_name": {
+      "correct": 3,
+      "cases": 3
+    },
+    "idiom": {
+      "correct": 2,
+      "cases": 2
+    },
+    "lowercase": {
+      "correct": 5,
+      "cases": 5
+    },
+    "multi": {
+      "correct": 14,
+      "cases": 14
+    },
+    "name": {
+      "correct": 2,
+      "cases": 2
+    },
+    "negative": {
+      "correct": 22,
+      "cases": 23
+    },
+    "not_offered": {
+      "correct": 11,
+      "cases": 12
+    },
+    "partial": {
+      "correct": 1,
+      "cases": 1
+    },
+    "policy": {
+      "correct": 1,
+      "cases": 1
+    },
+    "possessive": {
+      "correct": 1,
+      "cases": 1
+    },
+    "service": {
+      "correct": 11,
+      "cases": 11
+    },
+    "stt": {
+      "correct": 6,
+      "cases": 6
+    },
+    "substring": {
+      "correct": 1,
+      "cases": 1
+    },
+    "title": {
+      "correct": 42,
+      "cases": 42
+    },
+    "typo": {
+      "correct": 14,
+      "cases": 15
+    },
+    "unknown": {
+      "correct": 9,
+      "cases": 9
+    },
+    "weekday": {
+      "correct": 2,
+      "cases": 2
+    }
+  },
+  "failures": [
+    {
+      "id": "neg-021",
+      "message": "I want to cancel my appointment.",
+      "departments": {
+        "expected": [],
+        "got": [
+          [
+            "not_offered",
+            [
+              "Oncology"
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "dep-031",
+      "message": "Where is the nurology department?",
+      "departments": {
+        "expected": [
+          [
+            "not_offered",
+            [
+              "Neurology"
+            ]
+          ]
+        ],
+        "got": [
+          [
+            "ambiguous",
+            [
+              "Neurology",
+              "Urology"
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

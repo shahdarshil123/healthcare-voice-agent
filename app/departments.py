@@ -42,8 +42,13 @@ SERVICES = [
     },
 ]
 
+# Abbreviations that are only safe to match in CAPITALS: "Where is the ER?" means the emergency room,
+# but "Er, can I book..." is just a pause.
+CASE_SENSITIVE_ALIASES = {"emergency": ["ER"]}
+
 # Medical specialties Brightwater does NOT have. This is general medical vocabulary, not hospital data.
-# Only exact phrases are used here: we never claim something is missing based on a fuzzy guess.
+# Only EXACT phrases are used: we never claim something is missing based on a guess. Measured with
+# evaluate_entities.py: matching misspellings here turned "cancel my appointment" into "no Oncology department".
 SPECIALTIES_NOT_OFFERED = {
     "Neurology": ["neurology", "neurologist"],
     "Neurosurgery": ["neurosurgery", "neurosurgeon", "brain surgery", "brain surgeon"],
@@ -92,7 +97,14 @@ def build_entities() -> list[tuple[Entity, list[str]]]:
 
 
 ENTITIES = build_entities()
+# Specialties we don't have, as entities with no ID (their name identifies them) and no hospital facts.
+NOT_OFFERED = [(Entity("", specialty, ""), phrases) for specialty, phrases in SPECIALTIES_NOT_OFFERED.items()]
 DEPARTMENT_LIST = ", ".join(department["name"] for department in CLINIC["departments"])
+
+
+def key(entity: Entity) -> str:
+    """What identifies an entity: its ID, or for a specialty we don't have, its name."""
+    return entity.id or entity.name
 
 
 def contains_phrase(text: str, phrase: str) -> bool:
@@ -104,40 +116,36 @@ def resolve_departments(message: str) -> list[DepartmentMatch]:
     """Find every department, service, or specialty mentioned in a message."""
     text = message.lower()
     matches: list[DepartmentMatch] = []
-    found_ids: set[str] = set()
+    found: set[str] = set()
 
-    # 1. Exact names and aliases. The longest phrase found is reported as what was heard.
-    for entity, phrases in ENTITIES:
-        heard = [phrase for phrase in phrases if contains_phrase(text, phrase)]
-        if heard:
-            matches.append(DepartmentMatch(max(heard, key=len), "resolved", [entity]))
-            found_ids.add(entity.id)
+    # 1. Exact names and aliases (and specialties we don't have). The longest phrase found is reported.
+    for status, entities in (("resolved", ENTITIES), ("not_offered", NOT_OFFERED)):
+        for entity, phrases in entities:
+            heard = [phrase for phrase in phrases if contains_phrase(text, phrase)]
+            heard += [alias for alias in CASE_SENSITIVE_ALIASES.get(entity.id, []) if contains_phrase(message, alias)]
+            if heard:
+                matches.append(DepartmentMatch(max(heard, key=len), status, [entity]))
+                found.add(key(entity))
 
-    # 2. Specialties the hospital doesn't have (exact phrases only).
-    for specialty, phrases in SPECIALTIES_NOT_OFFERED.items():
-        heard = [phrase for phrase in phrases if contains_phrase(text, phrase)]
-        if heard:
-            matches.append(DepartmentMatch(max(heard, key=len), "not_offered", [Entity("", specialty, "")]))
-
-    # 3. Misspellings of department names and aliases, for long words not already matched.
-    known_words = {word for _, phrases in ENTITIES for phrase in phrases for word in phrase.split()}
-    vocabulary = {phrase: entity for entity, phrases in ENTITIES for phrase in phrases
-                  if " " not in phrase and len(phrase) >= TYPO_MIN_LENGTH}
+    # 2. Misspellings of departments and services we HAVE, for long words not already matched.
+    #    (Words of specialties we don't have count as known words, so they are never "corrected" into ours.)
+    known_words = {word for _, phrases in ENTITIES + NOT_OFFERED for phrase in phrases for word in phrase.split()}
+    vocabulary = [(phrase, entity) for entity, phrases in ENTITIES for phrase in phrases
+                  if " " not in phrase and len(phrase) >= TYPO_MIN_LENGTH]
     for word in set(re.findall(r"[a-z']+", text)):
         if len(word) < TYPO_MIN_LENGTH or word in known_words:
             continue
-        scored = [(difflib.SequenceMatcher(None, word, phrase).ratio(), entity)
-                  for phrase, entity in vocabulary.items()]
+        scored = [(difflib.SequenceMatcher(None, word, phrase).ratio(), entity) for phrase, entity in vocabulary]
         best = max((score for score, _ in scored), default=0)
         if best < TYPO_CUTOFF:
             continue
-        close = {entity.id: entity for score, entity in scored if score >= best - TYPO_TIE_MARGIN}
-        candidates = [entity for entity_id, entity in close.items() if entity_id not in found_ids]
+        close = {key(entity): entity for score, entity in scored if score >= best - TYPO_TIE_MARGIN}
         if len(close) > 1:
             matches.append(DepartmentMatch(word, "ambiguous", list(close.values())))
-        elif candidates:
-            matches.append(DepartmentMatch(word, "probable", candidates))
-            found_ids.add(candidates[0].id)
+        elif not close.keys() & found:
+            entity = next(iter(close.values()))
+            matches.append(DepartmentMatch(word, "probable", [entity]))
+            found.add(key(entity))
     return matches
 
 

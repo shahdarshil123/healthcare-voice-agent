@@ -149,7 +149,7 @@
     {
       "id": "cardiology",
       "name": "Cardiology",
-      "aliases": ["cardiologist", "cardiac", "cardio", "heart", "heart doctor"],
+      "aliases": ["cardiologist", "cardiac", "cardio", "heart doctor", "heart department", "heart clinic", "heart specialist", "heart problem", "heart problems", "heart condition", "heart care"],
       "location": "Building B, Floor 2",
       "phone": "(503) 555-0132",
       "description": "Heart and blood vessel care. A referral from a primary care doctor is required for new patients.",

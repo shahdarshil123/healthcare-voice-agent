@@ -1,0 +1,110 @@
+{"id": "doc-001", "message": "I would like to book an appointment with Dr. Kim on Friday.", "tags": ["doctor", "title", "unknown"], "doctors": [{"status": "not_found", "ids": []}], "departments": []}
+{"id": "doc-002", "message": "Is Dr. Smith available on Monday?", "tags": ["doctor", "title", "unknown"], "doctors": [{"status": "not_found", "ids": []}], "departments": []}
+{"id": "doc-003", "message": "Book me with Dr. Raj Patel on Friday.", "tags": ["doctor", "title", "full_name"], "doctors": [{"status": "resolved", "ids": ["dr-raj-patel"]}], "departments": []}
+{"id": "doc-004", "message": "Can I see Doctor Okafor?", "tags": ["doctor", "title"], "doctors": [{"status": "resolved", "ids": ["dr-chidi-okafor"]}], "departments": []}
+{"id": "doc-005", "message": "Is Dr. Lindqvist taking new patients?", "tags": ["doctor", "title"], "doctors": [{"status": "resolved", "ids": ["dr-hannah-lindqvist"]}], "departments": []}
+{"id": "doc-006", "message": "What days does Dr. Nguyen work?", "tags": ["doctor", "title"], "doctors": [{"status": "resolved", "ids": ["dr-thomas-nguyen"]}], "departments": []}
+{"id": "doc-007", "message": "Can my daughter see Dr. Rahman on Thursday?", "tags": ["doctor", "title"], "doctors": [{"status": "resolved", "ids": ["dr-aisha-rahman"]}], "departments": []}
+{"id": "doc-008", "message": "Is Dr. Hart in radiology?", "tags": ["doctor", "title", "department", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-olivia-hart"]}], "departments": [{"status": "resolved", "ids": ["radiology"]}]}
+{"id": "doc-009", "message": "Does Dr. Bell speak French?", "tags": ["doctor", "title"], "doctors": [{"status": "resolved", "ids": ["dr-marcus-bell"]}], "departments": []}
+{"id": "doc-010", "message": "When does Dr. Whitaker work?", "tags": ["doctor", "title"], "doctors": [{"status": "resolved", "ids": ["dr-james-whitaker"]}], "departments": []}
+{"id": "doc-011", "message": "Is Dr. Morales a bone doctor?", "tags": ["doctor", "title", "department", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-grace-morales"]}], "departments": [{"status": "resolved", "ids": ["orthopedics"]}]}
+{"id": "doc-012", "message": "Can I see Dr. Brooks on Saturday?", "tags": ["doctor", "title"], "doctors": [{"status": "resolved", "ids": ["dr-samuel-brooks"]}], "departments": []}
+{"id": "doc-013", "message": "Book Dr. Chen for a checkup.", "tags": ["doctor", "title", "department", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-maya-chen"]}], "departments": [{"status": "resolved", "ids": ["family-medicine"]}]}
+{"id": "doc-014", "message": "I'd like to see Dr. Elena Rivera.", "tags": ["doctor", "title", "full_name"], "doctors": [{"status": "resolved", "ids": ["dr-elena-rivera"]}], "departments": []}
+{"id": "doc-015", "message": "Can I see Dr. Maya on Monday?", "tags": ["doctor", "title", "first_name"], "doctors": [{"status": "resolved", "ids": ["dr-maya-chen"]}], "departments": []}
+{"id": "doc-016", "message": "Is Doctor Aisha in today?", "tags": ["doctor", "title", "first_name"], "doctors": [{"status": "resolved", "ids": ["dr-aisha-rahman"]}], "departments": []}
+{"id": "doc-017", "message": "Is Dr. Thomas working on Saturday?", "tags": ["doctor", "title", "first_name"], "doctors": [{"status": "resolved", "ids": ["dr-thomas-nguyen"]}], "departments": []}
+{"id": "doc-018", "message": "Can I see Dr. Raj Smith?", "tags": ["doctor", "title", "partial"], "doctors": [{"status": "possible", "ids": ["dr-raj-patel"]}], "departments": []}
+{"id": "doc-019", "message": "Can I see Doctor Akafur in dermatology?", "tags": ["doctor", "title", "typo", "stt", "department", "multi"], "doctors": [{"status": "possible", "ids": ["dr-chidi-okafor"]}], "departments": [{"status": "resolved", "ids": ["dermatology"]}]}
+{"id": "doc-020", "message": "Is Dr. Lindkvis free?", "tags": ["doctor", "title", "typo", "stt"], "doctors": [{"status": "possible", "ids": ["dr-hannah-lindqvist"]}], "departments": []}
+{"id": "doc-021", "message": "Can my son see Dr. Raman?", "tags": ["doctor", "title", "typo", "stt"], "doctors": [{"status": "possible", "ids": ["dr-aisha-rahman"]}], "departments": []}
+{"id": "doc-022", "message": "Book Dr. Patell please.", "tags": ["doctor", "title", "typo"], "doctors": [{"status": "possible", "ids": ["dr-raj-patel"]}], "departments": []}
+{"id": "doc-023", "message": "Is Dr. Whittaker available?", "tags": ["doctor", "title", "typo"], "doctors": [{"status": "possible", "ids": ["dr-james-whitaker"]}], "departments": []}
+{"id": "doc-024", "message": "I want to see Dr. Moralez.", "tags": ["doctor", "title", "typo"], "doctors": [{"status": "possible", "ids": ["dr-grace-morales"]}], "departments": []}
+{"id": "doc-025", "message": "Can I see Dr. Akhofer in dermatology?", "tags": ["doctor", "title", "typo", "stt", "department", "multi"], "doctors": [{"status": "possible", "ids": ["dr-chidi-okafor"]}], "departments": [{"status": "resolved", "ids": ["dermatology"]}]}
+{"id": "doc-026", "message": "is dr. lindqvist taking new patients", "tags": ["doctor", "title", "lowercase"], "doctors": [{"status": "resolved", "ids": ["dr-hannah-lindqvist"]}], "departments": []}
+{"id": "doc-027", "message": "can i see doctor patel tomorrow", "tags": ["doctor", "title", "lowercase"], "doctors": [{"status": "resolved", "ids": ["dr-raj-patel"]}], "departments": []}
+{"id": "doc-028", "message": "Dr Chen please", "tags": ["doctor", "title", "formatting"], "doctors": [{"status": "resolved", "ids": ["dr-maya-chen"]}], "departments": []}
+{"id": "doc-029", "message": "Is Dr. Rivera's office on the second floor?", "tags": ["doctor", "title", "possessive"], "doctors": [{"status": "resolved", "ids": ["dr-elena-rivera"]}], "departments": []}
+{"id": "doc-030", "message": "I NEED TO SEE DR. OKAFOR", "tags": ["doctor", "title", "formatting"], "doctors": [{"status": "resolved", "ids": ["dr-chidi-okafor"]}], "departments": []}
+{"id": "doc-031", "message": "Is Patel in the neurology department?", "tags": ["doctor", "bare_name", "department", "not_offered", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-raj-patel"]}], "departments": [{"status": "not_offered", "ids": ["Neurology"]}]}
+{"id": "doc-032", "message": "Can I see Okafor on Tuesday?", "tags": ["doctor", "bare_name"], "doctors": [{"status": "resolved", "ids": ["dr-chidi-okafor"]}], "departments": []}
+{"id": "doc-033", "message": "is elena rivera available?", "tags": ["doctor", "bare_name", "full_name", "lowercase"], "doctors": [{"status": "resolved", "ids": ["dr-elena-rivera"]}], "departments": []}
+{"id": "doc-034", "message": "Does Lindqvist work on Thursdays?", "tags": ["doctor", "bare_name"], "doctors": [{"status": "resolved", "ids": ["dr-hannah-lindqvist"]}], "departments": []}
+{"id": "doc-035", "message": "is patel available?", "tags": ["doctor", "bare_name", "lowercase"], "doctors": [{"status": "resolved", "ids": ["dr-raj-patel"]}], "departments": []}
+{"id": "doc-036", "message": "Dr. Nguyen or Dr. Smith, whoever is free.", "tags": ["doctor", "title", "multi", "unknown"], "doctors": [{"status": "resolved", "ids": ["dr-thomas-nguyen"]}, {"status": "not_found", "ids": []}], "departments": []}
+{"id": "doc-037", "message": "Is Dr. Chen or Dr. Patel free on Monday?", "tags": ["doctor", "title", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-maya-chen"]}, {"status": "resolved", "ids": ["dr-raj-patel"]}], "departments": []}
+{"id": "doc-038", "message": "Should I see Dr. Rivera or Dr. Whitaker?", "tags": ["doctor", "title", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-elena-rivera"]}, {"status": "resolved", "ids": ["dr-james-whitaker"]}], "departments": []}
+{"id": "neg-001", "message": "I need a doctor Monday morning.", "tags": ["negative", "weekday"], "doctors": [], "departments": []}
+{"id": "neg-002", "message": "Is the doctor Friday available?", "tags": ["negative", "weekday"], "doctors": [], "departments": []}
+{"id": "neg-003", "message": "Doctor Who is my favourite show.", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-004", "message": "Doctor, I have a question about parking.", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-005", "message": "Ring the Bell twice at reception.", "tags": ["negative", "everyday_word"], "doctors": [], "departments": []}
+{"id": "neg-006", "message": "I live on Brooks Road.", "tags": ["negative", "everyday_word"], "doctors": [], "departments": []}
+{"id": "neg-007", "message": "I need to see a doctor tomorrow.", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-008", "message": "My name is Michael Johnson.", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-009", "message": "Can a doctor see my kid today?", "tags": ["department", "alias"], "doctors": [], "departments": [{"status": "resolved", "ids": ["pediatrics"]}]}
+{"id": "neg-010", "message": "Is there a pharmacy in the hospital?", "tags": ["negative", "facility"], "doctors": [], "departments": []}
+{"id": "neg-011", "message": "Can I bring my dog when I visit a patient?", "tags": ["negative", "policy"], "doctors": [], "departments": []}
+{"id": "neg-012", "message": "How much does parking cost?", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-013", "message": "What are the visiting hours?", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-014", "message": "I'd like an appointment on Friday.", "tags": ["negative", "substring"], "doctors": [], "departments": []}
+{"id": "neg-015", "message": "Er, can I book something?", "tags": ["negative", "filler"], "doctors": [], "departments": []}
+{"id": "neg-016", "message": "My heart is set on a Friday appointment.", "tags": ["negative", "idiom"], "doctors": [], "departments": []}
+{"id": "neg-017", "message": "Keep an eye on my booking please.", "tags": ["negative", "idiom"], "doctors": [], "departments": []}
+{"id": "neg-018", "message": "Should I stop taking my blood pressure tablets?", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-019", "message": "Hello, my name is Darcy.", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-020", "message": "What departments do you have?", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-021", "message": "I want to cancel my appointment.", "tags": ["negative"], "doctors": [], "departments": []}
+{"id": "neg-022", "message": "Where is the cafeteria?", "tags": ["negative", "facility"], "doctors": [], "departments": []}
+{"id": "dep-001", "message": "Where is the Cardiology department?", "tags": ["department", "name"], "doctors": [], "departments": [{"status": "resolved", "ids": ["cardiology"]}]}
+{"id": "dep-002", "message": "Where is the heart department?", "tags": ["department", "alias"], "doctors": [], "departments": [{"status": "resolved", "ids": ["cardiology"]}]}
+{"id": "dep-003", "message": "I need to see a cardiologist.", "tags": ["department", "alias", "title"], "doctors": [], "departments": [{"status": "resolved", "ids": ["cardiology"]}]}
+{"id": "dep-004", "message": "Do you have a skin department?", "tags": ["department", "alias"], "doctors": [], "departments": [{"status": "resolved", "ids": ["dermatology"]}]}
+{"id": "dep-005", "message": "I want to see a bone doctor.", "tags": ["department", "alias"], "doctors": [], "departments": [{"status": "resolved", "ids": ["orthopedics"]}]}
+{"id": "dep-006", "message": "Is there a children's department?", "tags": ["department", "alias"], "doctors": [], "departments": [{"status": "resolved", "ids": ["pediatrics"]}]}
+{"id": "dep-007", "message": "Where is the pediatrician?", "tags": ["department", "alias", "title"], "doctors": [], "departments": [{"status": "resolved", "ids": ["pediatrics"]}]}
+{"id": "dep-008", "message": "Where do I go for an X-ray?", "tags": ["department", "alias", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["radiology"]}]}
+{"id": "dep-009", "message": "I need an MRI.", "tags": ["department", "alias", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["radiology"]}]}
+{"id": "dep-010", "message": "Where can I get a flu shot?", "tags": ["department", "alias", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["family-medicine"]}]}
+{"id": "dep-011", "message": "I need a checkup with my GP.", "tags": ["department", "alias"], "doctors": [], "departments": [{"status": "resolved", "ids": ["family-medicine"]}]}
+{"id": "dep-012", "message": "Where is the orthopaedics department?", "tags": ["department", "british_spelling"], "doctors": [], "departments": [{"status": "resolved", "ids": ["orthopedics"]}]}
+{"id": "dep-013", "message": "Is paediatrics on the second floor?", "tags": ["department", "british_spelling"], "doctors": [], "departments": [{"status": "resolved", "ids": ["pediatrics"]}]}
+{"id": "dep-014", "message": "Where is family medicine?", "tags": ["department", "name"], "doctors": [], "departments": [{"status": "resolved", "ids": ["family-medicine"]}]}
+{"id": "dep-015", "message": "Where is the dermatalogy department?", "tags": ["department", "typo"], "doctors": [], "departments": [{"status": "probable", "ids": ["dermatology"]}]}
+{"id": "dep-016", "message": "Where is the radiolog department?", "tags": ["department", "typo", "stt"], "doctors": [], "departments": [{"status": "probable", "ids": ["radiology"]}]}
+{"id": "dep-017", "message": "Where is cardiolgy?", "tags": ["department", "typo"], "doctors": [], "departments": [{"status": "probable", "ids": ["cardiology"]}]}
+{"id": "dep-018", "message": "Is pediatrcs open on Saturday?", "tags": ["department", "typo"], "doctors": [], "departments": [{"status": "probable", "ids": ["pediatrics"]}]}
+{"id": "dep-019", "message": "I need orthopedicts.", "tags": ["department", "typo"], "doctors": [], "departments": [{"status": "probable", "ids": ["orthopedics"]}]}
+{"id": "dep-020", "message": "Where is the radiolgist?", "tags": ["department", "typo"], "doctors": [], "departments": [{"status": "probable", "ids": ["radiology"]}]}
+{"id": "dep-021", "message": "Where is the neurology department?", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Neurology"]}]}
+{"id": "dep-022", "message": "Do you have an eye department?", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Ophthalmology (eye care)"]}]}
+{"id": "dep-023", "message": "I need a dentist.", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Dentistry"]}]}
+{"id": "dep-024", "message": "Do you treat cancer?", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Oncology"]}]}
+{"id": "dep-025", "message": "Is there a mental health clinic?", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Psychiatry"]}]}
+{"id": "dep-026", "message": "I need an ENT specialist.", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Ear, nose, and throat (ENT)"]}]}
+{"id": "dep-027", "message": "Does Dr. Patel perform brain surgery?", "tags": ["department", "not_offered", "doctor", "title", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-raj-patel"]}], "departments": [{"status": "not_offered", "ids": ["Neurosurgery"]}]}
+{"id": "dep-028", "message": "I'm looking for a gynecologist.", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Obstetrics and gynecology"]}]}
+{"id": "dep-029", "message": "Do you have physiotherapy?", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Physical therapy"]}]}
+{"id": "dep-030", "message": "Do you have a neurologist?", "tags": ["department", "not_offered"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Neurology"]}]}
+{"id": "dep-031", "message": "Where is the nurology department?", "tags": ["department", "not_offered", "typo"], "doctors": [], "departments": [{"status": "not_offered", "ids": ["Neurology"]}]}
+{"id": "dep-032", "message": "Where is the lab?", "tags": ["department", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["laboratory"]}]}
+{"id": "dep-033", "message": "Where do I get a blood test?", "tags": ["department", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["laboratory"]}]}
+{"id": "dep-034", "message": "Where is the billing department?", "tags": ["department", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["billing"]}]}
+{"id": "dep-035", "message": "I have a question about my bill.", "tags": ["department", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["billing"]}]}
+{"id": "dep-036", "message": "Do you have an emergency room?", "tags": ["department", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["emergency"]}]}
+{"id": "dep-037", "message": "Where is the ER?", "tags": ["department", "service", "abbreviation"], "doctors": [], "departments": [{"status": "resolved", "ids": ["emergency"]}]}
+{"id": "dep-038", "message": "Is A&E open at night?", "tags": ["department", "service", "abbreviation"], "doctors": [], "departments": [{"status": "resolved", "ids": ["emergency"]}]}
+{"id": "dep-039", "message": "My child needs an x-ray.", "tags": ["department", "multi"], "doctors": [], "departments": [{"status": "resolved", "ids": ["pediatrics"]}, {"status": "resolved", "ids": ["radiology"]}]}
+{"id": "dep-040", "message": "Can I see Dr. Akafur for my kid's rash on Friday?", "tags": ["department", "doctor", "multi", "typo", "stt"], "doctors": [{"status": "possible", "ids": ["dr-chidi-okafor"]}], "departments": [{"status": "resolved", "ids": ["dermatology"]}, {"status": "resolved", "ids": ["pediatrics"]}]}
+{"id": "dep-041", "message": "Is Dr. Hart in cardiology or radiology?", "tags": ["department", "doctor", "multi"], "doctors": [{"status": "resolved", "ids": ["dr-olivia-hart"]}], "departments": [{"status": "resolved", "ids": ["cardiology"]}, {"status": "resolved", "ids": ["radiology"]}]}
+{"id": "dep-042", "message": "Can I pay my bill online?", "tags": ["department", "service"], "doctors": [], "departments": [{"status": "resolved", "ids": ["billing"]}]}
+{"id": "neg-023", "message": "Is Dr. Jones in today?", "tags": ["doctor", "title", "unknown", "common_surname"], "doctors": [{"status": "not_found", "ids": []}], "departments": []}
+{"id": "neg-024", "message": "Can I see Dr. Davis on Friday?", "tags": ["doctor", "title", "unknown", "common_surname"], "doctors": [{"status": "not_found", "ids": []}], "departments": []}
+{"id": "neg-025", "message": "Is Dr. Ahmed available?", "tags": ["doctor", "title", "unknown", "common_surname"], "doctors": [{"status": "not_found", "ids": []}], "departments": []}
+{"id": "neg-026", "message": "I want Dr. Garcia please.", "tags": ["doctor", "title", "unknown", "common_surname"], "doctors": [{"status": "not_found", "ids": []}], "departments": []}
+{"id": "neg-027", "message": "Book me with Dr. Taylor.", "tags": ["doctor", "title", "unknown", "common_surname"], "doctors": [{"status": "not_found", "ids": []}], "departments": []}
+{"id": "neg-028", "message": "Is Dr. Brown in cardiology?", "tags": ["doctor", "title", "unknown", "common_surname", "department", "multi"], "doctors": [{"status": "not_found", "ids": []}], "departments": [{"status": "resolved", "ids": ["cardiology"]}]}
+{"id": "neg-029", "message": "Please ring the bell for me.", "tags": ["negative", "everyday_word"], "doctors": [], "departments": []}
+{"id": "neg-030", "message": "I need a doctor appointment.", "tags": ["negative", "lowercase"], "doctors": [], "departments": []}

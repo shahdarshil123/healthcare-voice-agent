@@ -1,0 +1,301 @@
+{
+  "created_at": "2026-10-20T22:26:28.274696+00:00",
+  "cases": 102,
+  "cases_fully_correct": 93,
+  "doctors": {
+    "precision": 0.929,
+    "recall": 0.886,
+    "f1": 0.907,
+    "true_positives": 39,
+    "false_positives": 3,
+    "false_negatives": 5
+  },
+  "departments": {
+    "precision": 0.98,
+    "recall": 0.962,
+    "f1": 0.971,
+    "true_positives": 50,
+    "false_positives": 1,
+    "false_negatives": 2
+  },
+  "wrong_denials": [
+    "doc-025: ('not_found', ())"
+  ],
+  "by_tag": {
+    "abbreviation": {
+      "correct": 1,
+      "cases": 2
+    },
+    "alias": {
+      "correct": 11,
+      "cases": 11
+    },
+    "bare_name": {
+      "correct": 4,
+      "cases": 5
+    },
+    "british_spelling": {
+      "correct": 2,
+      "cases": 2
+    },
+    "department": {
+      "correct": 46,
+      "cases": 49
+    },
+    "doctor": {
+      "correct": 35,
+      "cases": 41
+    },
+    "everyday_word": {
+      "correct": 2,
+      "cases": 2
+    },
+    "facility": {
+      "correct": 2,
+      "cases": 2
+    },
+    "filler": {
+      "correct": 1,
+      "cases": 1
+    },
+    "first_name": {
+      "correct": 3,
+      "cases": 3
+    },
+    "formatting": {
+      "correct": 2,
+      "cases": 2
+    },
+    "full_name": {
+      "correct": 3,
+      "cases": 3
+    },
+    "idiom": {
+      "correct": 1,
+      "cases": 2
+    },
+    "lowercase": {
+      "correct": 1,
+      "cases": 4
+    },
+    "multi": {
+      "correct": 12,
+      "cases": 13
+    },
+    "name": {
+      "correct": 2,
+      "cases": 2
+    },
+    "negative": {
+      "correct": 20,
+      "cases": 21
+    },
+    "not_offered": {
+      "correct": 11,
+      "cases": 12
+    },
+    "partial": {
+      "correct": 1,
+      "cases": 1
+    },
+    "policy": {
+      "correct": 1,
+      "cases": 1
+    },
+    "possessive": {
+      "correct": 0,
+      "cases": 1
+    },
+    "service": {
+      "correct": 10,
+      "cases": 11
+    },
+    "stt": {
+      "correct": 5,
+      "cases": 6
+    },
+    "substring": {
+      "correct": 1,
+      "cases": 1
+    },
+    "title": {
+      "correct": 31,
+      "cases": 36
+    },
+    "typo": {
+      "correct": 12,
+      "cases": 15
+    },
+    "unknown": {
+      "correct": 3,
+      "cases": 3
+    },
+    "weekday": {
+      "correct": 2,
+      "cases": 2
+    }
+  },
+  "failures": [
+    {
+      "id": "doc-022",
+      "message": "Book Dr. Patell please.",
+      "doctors": {
+        "expected": [
+          [
+            "possible",
+            [
+              "dr-raj-patel"
+            ]
+          ]
+        ],
+        "got": [
+          [
+            "possible",
+            [
+              "dr-marcus-bell",
+              "dr-raj-patel"
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "doc-025",
+      "message": "Can I see Dr. Akhofer in dermatology?",
+      "doctors": {
+        "expected": [
+          [
+            "possible",
+            [
+              "dr-chidi-okafor"
+            ]
+          ]
+        ],
+        "got": [
+          [
+            "not_found",
+            []
+          ]
+        ]
+      }
+    },
+    {
+      "id": "doc-026",
+      "message": "is dr. lindqvist taking new patients",
+      "doctors": {
+        "expected": [
+          [
+            "resolved",
+            [
+              "dr-hannah-lindqvist"
+            ]
+          ]
+        ],
+        "got": []
+      }
+    },
+    {
+      "id": "doc-027",
+      "message": "can i see doctor patel tomorrow",
+      "doctors": {
+        "expected": [
+          [
+            "resolved",
+            [
+              "dr-raj-patel"
+            ]
+          ]
+        ],
+        "got": []
+      }
+    },
+    {
+      "id": "doc-029",
+      "message": "Is Dr. Rivera's office on the second floor?",
+      "doctors": {
+        "expected": [
+          [
+            "resolved",
+            [
+              "dr-elena-rivera"
+            ]
+          ]
+        ],
+        "got": [
+          [
+            "possible",
+            [
+              "dr-elena-rivera"
+            ]
+          ],
+          [
+            "resolved",
+            [
+              "dr-elena-rivera"
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "doc-035",
+      "message": "is patel available?",
+      "doctors": {
+        "expected": [
+          [
+            "resolved",
+            [
+              "dr-raj-patel"
+            ]
+          ]
+        ],
+        "got": []
+      }
+    },
+    {
+      "id": "neg-016",
+      "message": "My heart is set on a Friday appointment.",
+      "departments": {
+        "expected": [],
+        "got": [
+          [
+            "resolved",
+            [
+              "cardiology"
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "id": "dep-031",
+      "message": "Where is the nurology department?",
+      "departments": {
+        "expected": [
+          [
+            "not_offered",
+            [
+              "Neurology"
+            ]
+          ]
+        ],
+        "got": []
+      }
+    },
+    {
+      "id": "dep-037",
+      "message": "Where is the ER?",
+      "departments": {
+        "expected": [
+          [
+            "resolved",
+            [
+              "emergency"
+            ]
+          ]
+        ],
+        "got": []
+      }
+    }
+  ]
+}
