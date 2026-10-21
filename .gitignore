@@ -2,6 +2,8 @@
 __pycache__/
 .pytest_cache/
 .venv/
+# A virtual environment damaged by a disk error on 2026-10-21. Delete it after repairing the C: drive.
+.venv-corrupted/
 
 # The knowledge base database. It's rebuilt from data/documents/ by running ingest.py.
 data/chroma/

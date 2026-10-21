@@ -33,6 +33,7 @@
     "new_patient_arrive_early_minutes": 20,
     "max_appointments_booked_per_patient": 3,
     "booking_window_days": 90,
+    "slot_interval_minutes": 15,
     "same_day_appointments_departments": ["family-medicine", "pediatrics"],
     "booking_channels": [
       "Appointments line (503) 555-0110",

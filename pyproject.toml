@@ -12,6 +12,10 @@ dependencies = [
     "httpx>=0.28.1",
     "pyyaml>=6.0.3",
     "chromadb>=1.5.9",
+    "sqlalchemy>=2.0",
+    "alembic>=1.20.0",
+    "psycopg[binary]>=3.3.6",
+    "tzdata>=2026.5",
 ]
 
 [dependency-groups]
@@ -38,4 +42,17 @@ max-line-length = 120
 [tool.pylint."messages control"]
 # Our function names (e.g. test_chat_rejects_an_empty_message) already say what they do.
 # In tests, "assert x == []" is clearer than "assert not x": pytest then shows what x actually was.
-disable = ["missing-function-docstring", "use-implicit-booleaness-not-comparison"]
+# Same for classes: names like DoctorNotFound or class Shift(BaseModel) already say what they are.
+disable = ["missing-function-docstring", "missing-class-docstring", "use-implicit-booleaness-not-comparison"]
+
+[tool.pylint.typecheck]
+# SQLAlchemy and Alembic create these attributes at runtime, which Pylint can't see (false "no-member" errors).
+ignored-modules = ["alembic.context"]
+generated-members = ["sessionmaker.begin"]
+
+[tool.pylint.design]
+# Database models and Pydantic models are meant to hold data, not to have methods.
+min-public-methods = 0
+# Booking functions take their details as named keyword arguments (patient_id=..., doctor_id=...), which keeps
+# calls readable even with more than Pylint's default limit of 5.
+max-args = 10

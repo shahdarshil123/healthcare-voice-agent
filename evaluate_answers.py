@@ -20,6 +20,7 @@ Needs Ollama running and the knowledge base built (ingest.py). Exit code 1 if th
 
 import argparse
 import json
+import os
 import re
 import statistics
 import sys
@@ -29,11 +30,17 @@ from pathlib import Path
 
 from fastapi.testclient import TestClient
 
+
 from app import knowledge, llm
+from app.availability_lookup import find_times
 from app.clinic import CLINIC
 from app.documents import load_all_chunks
 from app.doctors import NOT_NAMES, name_parts
 from app.main import app
+
+# A fixed "now" (the seed data's reference moment), so availability answers are the same on every run.
+# Read when each answer is made (app.availability_lookup.current_time), so setting it here is early enough.
+os.environ.setdefault("CAREVOICE_NOW", "2026-10-20T12:00")
 
 ROOT = Path(__file__).parent
 CASES_FILE = ROOT / "data" / "evaluation" / "answers" / "cases.jsonl"
@@ -50,6 +57,7 @@ RULES = {
     "grounded":     {"runs": 5,  "min_pass_rate": 0.95, "blocking": True,  "max_drop": 0.05},
     "refusal":      {"runs": 5,  "min_pass_rate": 0.95, "blocking": True,  "max_drop": 0.05},
     "conversation": {"runs": 5,  "min_pass_rate": 0.95, "blocking": True,  "max_drop": 0.05},
+    "availability": {"runs": 5,  "min_pass_rate": 0.95, "blocking": True,  "max_drop": 0.05},
     "style":        {"runs": 5,  "min_pass_rate": 0.00, "blocking": False, "max_drop": 1.00},
 }
 
@@ -83,9 +91,19 @@ def build_source_text() -> str:
     return normalise(json.dumps(CLINIC, ensure_ascii=False) + "\n" + "\n".join(current))
 
 
+def to_24_hour(match: re.Match) -> str:
+    hour, minute, half = int(match[1]), match[2], match[3].lower().replace(".", "")
+    if half == "pm" and hour < 12:
+        hour += 12
+    elif half == "am" and hour == 12:
+        hour = 0
+    return f"{hour:02d}:{minute}"
+
+
 def normalise(text: str) -> str:
-    """Make equivalent spellings identical: dashes, and "8:00" -> "08:00"."""
+    """Make equivalent spellings identical: dashes, "2:00 PM" -> "14:00", and "8:00" -> "08:00"."""
     text = text.replace("\u2013", "-").replace("\u2014", "-").replace("\u2019", "'")
+    text = re.sub(r"\b(\d{1,2}):(\d\d)\s*(am|pm|a\.m\.|p\.m\.)", to_24_hour, text, flags=re.IGNORECASE)
     return re.sub(r"\b(\d):(\d\d)\b", r"0\1:\2", text)
 
 
@@ -93,21 +111,27 @@ SOURCE_TEXT = build_source_text()
 DOCTOR_NAMES = {name for doctor in CLINIC["doctors"] for name in name_parts(doctor)}
 
 
-def check_facts(reply: str, user_message: str) -> list[str]:
-    """Facts in the reply that don't appear in any source (empty list = nothing invented)."""
+def check_facts(reply: str, user_message: str, given_facts: list[str] | None = None) -> list[str]:
+    """Facts in the reply that don't appear in any source (empty list = nothing invented).
+
+    Sources: clinic.json, the current documents, the verified lookup facts the model was given for this
+    message (e.g. free times from the booking database), and times the user said themselves ("829 AM").
+    """
     reply = normalise(reply)
+    sources = SOURCE_TEXT + "\n" + normalise("\n".join(given_facts or []))
+    said_by_user = {t.strftime("%H:%M") for t in find_times(user_message)}
     unsupported = []
     for phone in re.findall(r"\(\d{3}\) \d{3}-\d{4}", reply):
-        if phone not in SOURCE_TEXT:
+        if phone not in sources:
             unsupported.append(f"phone {phone}")
     for amount in re.findall(r"\$\d+(?:\.\d\d)?", reply):
-        if not re.search(re.escape(amount) + r"(?![\d.])", SOURCE_TEXT):
+        if not re.search(re.escape(amount) + r"(?![\d.])", sources):
             unsupported.append(f"amount {amount}")
     for percent in re.findall(r"\b\d+%", reply):
-        if percent not in SOURCE_TEXT:
+        if percent not in sources:
             unsupported.append(f"percentage {percent}")
     for clock in re.findall(r"\b\d\d:\d\d\b", reply):
-        if clock not in SOURCE_TEXT:
+        if clock not in sources and clock not in said_by_user:
             unsupported.append(f"time {clock}")
     # Doctor names: must be a real doctor, or a name the user themselves said ("There is no Dr. Kim").
     for words in re.findall(r"\bDr\.?\s+([A-Z][a-z'-]+(?:\s+[A-Z][a-z'-]+)?)", reply):
@@ -132,14 +156,17 @@ def precondition_problem(case: dict) -> str | None:
     return None
 
 
-def ask(client: TestClient, case: dict) -> tuple[str, float]:
-    """Send the setup messages (if any) and the case's message in one conversation. Returns (reply, seconds)."""
+def ask(client: TestClient, case: dict) -> tuple[str, float, list[str]]:
+    """Send the setup messages (if any) and the case's message in one conversation.
+
+    Returns (reply, seconds, the verified facts the model was given for the message).
+    """
     conversation_id = None
     for earlier in case.get("setup", []):
         response = client.post("/chat", json={"message": earlier, "conversation_id": conversation_id})
         conversation_id = response.json()["conversation_id"]
     body = client.post("/chat", json={"message": case["message"], "conversation_id": conversation_id}).json()
-    return body["reply"], body["timings"]["total_seconds"]
+    return body["reply"], body["timings"]["total_seconds"], body.get("facts", [])
 
 
 def run_case(client: TestClient, case: dict, runs: int) -> dict:
@@ -149,10 +176,10 @@ def run_case(client: TestClient, case: dict, runs: int) -> dict:
         result["invalid"] = problem
         return result
     for _ in range(runs):
-        reply, seconds = ask(client, case)
+        reply, seconds, given_facts = ask(client, case)
         result["seconds"].append(seconds)
         problems = check_phrases(reply, case)
-        problems += [f"unsupported {fact}" for fact in check_facts(reply, case["message"])]
+        problems += [f"unsupported {fact}" for fact in check_facts(reply, case["message"], given_facts)]
         if problems:
             result["failures"].append({"reply": reply, "problems": problems})
         else:

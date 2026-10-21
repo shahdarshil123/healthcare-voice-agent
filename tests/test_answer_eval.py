@@ -48,6 +48,31 @@ def test_times_are_normalised_before_checking():
     assert check_facts("The lab opens at 06:30.", "") == ["time 06:30"]
 
 
+def test_am_pm_times_are_read_as_24_hour():
+    # "2:00 PM" is 14:00 (a real Saturday closing time is 13:00, but 14:00 appears in schedules).
+    assert check_facts("The appointment is at 2:00 PM.", "") == []
+    assert check_facts("The appointment is at 4:59 AM.", "") == ["time 04:59"]
+
+
+def test_facts_from_the_lookups_count_as_sources():
+    # Free times come from the booking database via the availability lookup, not from clinic.json.
+    reply = "Free start times are 10:00-13:45 and 14:30-17:45."
+    assert "time 13:45" in check_facts(reply, "")  # not in clinic.json or the documents...
+    assert check_facts(reply, "", ["free start times 10:00-13:45, 14:30-17:45"]) == []  # ...but in the lookup
+
+
+def test_times_the_user_said_count_as_sources():
+    assert check_facts("8:29 AM is not a start time.", "Book Dr. Raj from 829 AM") == []
+    assert check_facts("8:29 AM is not a start time.", "Book Dr. Raj on Monday") == ["time 08:29"]
+
+
+def test_saying_nothing_was_booked_is_not_a_booking_claim():
+    availability_case = next(case for case in load_cases() if case["id"] == "availability-002")
+    honest = "08:00 is free. Nothing has been booked. Call (503) 555-0110 to book."
+    assert check_phrases(honest, availability_case) == []
+    assert check_phrases("08:00 is free. I've booked it for you. (503) 555-0110", availability_case) != []
+
+
 def test_doctor_names_must_be_real_or_said_by_the_user():
     assert check_facts("There is no Dr. Kim at Brightwater.", "Book Dr. Kim") == []  # the user said it
     assert check_facts("Please see Dr. Kim instead.", "Book a checkup") == ["doctor name 'Kim'"]

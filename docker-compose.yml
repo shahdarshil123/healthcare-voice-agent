@@ -1,0 +1,28 @@
+# Local development services for CareVoice AI.
+#
+#   docker compose up -d      start PostgreSQL in the background
+#   docker compose down       stop it (the data is kept in the "pgdata" volume)
+#   docker compose down -v    stop it AND delete all data (re-create with: alembic upgrade head + seed.py)
+#
+# The password is for local development only. Nothing here is exposed beyond this computer.
+
+services:
+  postgres:
+    image: postgres:16.4-alpine
+    container_name: carevoice-postgres
+    environment:
+      POSTGRES_USER: carevoice
+      POSTGRES_PASSWORD: carevoice-local-dev
+      POSTGRES_DB: carevoice
+    ports:
+      - "127.0.0.1:5432:5432"  # only reachable from this computer
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U carevoice -d carevoice"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pgdata:

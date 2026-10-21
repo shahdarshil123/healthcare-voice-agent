@@ -23,7 +23,6 @@ TYPO_TIE_MARGIN = 0.05
 
 HOSPITAL_NAME = CLINIC["hospital"]["name"]
 
-# Services that aren't outpatient departments, but that patients ask about as if they were.
 SERVICES = [
     {
         "id": "laboratory", "name": "Laboratory",

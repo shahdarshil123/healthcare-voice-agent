@@ -21,10 +21,14 @@ from app.doctors import look_up_doctors
 from app.knowledge import KnowledgeError, SearchResult
 from app.llm import LLMError, add_documents_to_question
 
-# Every test in this file uses the fake search, so no test here needs Ollama or the knowledge base.
-pytestmark = pytest.mark.usefixtures("no_documents")
+# Every test in this file uses the fake search and availability, so none needs Ollama, the knowledge base,
+# or the booking database.
+pytestmark = pytest.mark.usefixtures("no_documents", "no_availability")
 
 client = TestClient(main.app)
+
+# Kept before any test replaces it with a fake, for the test that needs the real one.
+real_availability_facts_for = main.availability_facts_for
 
 
 def as_sent(text):
@@ -125,7 +129,28 @@ def test_chat_returns_retrieval_diagnostics(monkeypatch, fake_llm):
     ]
     assert result["sources"] == [{"title": "Cancellation Policy", "section": "Fees"}]
     assert set(result["timings"]) == {"search_seconds", "lookup_seconds", "llm_seconds", "total_seconds"}
-    assert result["lookups"] == {"doctors": 0, "departments": 0}
+    assert result["lookups"] == {"doctors": 0, "departments": 0, "availability": 0}
+
+
+def test_chat_attaches_availability_facts(monkeypatch, fake_llm):
+    monkeypatch.setattr(main, "availability_facts_for", lambda text, conversation_id: ["08:00 IS free."])
+    client.post("/chat", json={"message": "Is Dr. Patel free on Monday at 8?"})
+
+    sent = fake_llm.received[0][-1]["content"]
+    assert "<availability_lookup>\n08:00 IS free.\n</availability_lookup>" in sent
+
+
+def test_chat_still_works_when_the_booking_database_is_down(monkeypatch, fake_llm):
+    def database_down(*args, **kwargs):
+        raise main.SQLAlchemyError("connection refused")
+
+    # The real availability lookup this time, with a broken database behind it.
+    monkeypatch.setattr(main, "availability_facts_for", real_availability_facts_for)
+    monkeypatch.setattr(main, "booking_database", database_down)
+    response = client.post("/chat", json={"message": "Is Dr. Patel free on Monday at 8?"})
+
+    assert response.status_code == 200
+    assert "<availability_lookup>" not in fake_llm.received[0][-1]["content"]
 
 
 # ---------- /voice-chat ----------
